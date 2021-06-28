@@ -3,7 +3,8 @@
   "compilerOptions": {
     "noEmit": true,
     "sourceMap": false,
-    "incremental": false
+    "incremental": false,
+    "skipLibCheck": true
   },
   "include": ["src"]
 }
