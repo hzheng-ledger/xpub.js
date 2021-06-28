@@ -42,5 +42,5 @@ jobs:
       #     TAG: latest
       #     LOG_LEVEL: debug
       - name: Run tests
-        run: yarn test bitcoininjs --silent
+        run: yarn test --silent
         timeout-minutes: 60
