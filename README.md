@@ -4,9 +4,9 @@ simple lib to sync and build tx from xpubs for bitcoin
 
 ## API
 
-soon
+take a look at the __tests__ folder
 
-## API
+## Todo
 
 - nicer ts
 - setup ci for tx tests
