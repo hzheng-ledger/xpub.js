@@ -36,6 +36,7 @@ declare class Xpub extends EventEmitter {
     }, destAddress: string, amount: number, fee: number): Promise<{
         psbt: import("bitcoinjs-lib").Psbt;
         inputsAddresses: Address[];
+        txHexs: string[];
     }>;
     broadcastTx(rawTxHex: string): Promise<any>;
     getAddressesBalance(addresses: Address[]): Promise<number>;

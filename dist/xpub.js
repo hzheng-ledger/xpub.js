@@ -381,7 +381,7 @@ var Xpub = /** @class */ (function (_super) {
                             address: changeAddress,
                             value: total - amount - fee,
                         });
-                        return [2 /*return*/, { psbt: psbt, inputsAddresses: inputsAddresses }];
+                        return [2 /*return*/, { psbt: psbt, inputsAddresses: inputsAddresses, txHexs: txHexs }];
                 }
             });
         });
