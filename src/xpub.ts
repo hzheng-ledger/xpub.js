@@ -269,7 +269,7 @@ class Xpub extends EventEmitter {
         value: total - amount - fee,
       });
 
-    return { psbt, inputsAddresses };
+    return { psbt, inputsAddresses, txHexs };
   }
 
   async broadcastTx(rawTxHex: string) {
