@@ -74,7 +74,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __importDefault(require("axios"));
 var axios_retry_1 = __importDefault(require("axios-retry"));
 var https = __importStar(require("https"));
-var lodash_1 = require("lodash");
 var eventemitter_1 = __importDefault(require("../utils/eventemitter"));
 // an Live explorer V3 class
 var LedgerV3Dot2Dot4 = /** @class */ (function (_super) {
@@ -122,7 +121,7 @@ var LedgerV3Dot2Dot4 = /** @class */ (function (_super) {
     };
     LedgerV3Dot2Dot4.prototype.getAddressTxsSinceLastTxBlock = function (batchSize, address, lastTx) {
         return __awaiter(this, void 0, void 0, function () {
-            var params, url, res, firstNonPendingIndex, txs;
+            var params, url, res;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -145,10 +144,8 @@ var LedgerV3Dot2Dot4 = /** @class */ (function (_super) {
                             })];
                     case 1:
                         res = (_a.sent()).data;
-                        firstNonPendingIndex = lodash_1.findIndex(res.txs, function (tx) { return !!tx.block; });
-                        txs = res.txs.slice(firstNonPendingIndex, res.txs.length);
                         // faster than mapping
-                        txs.forEach(function (tx) {
+                        res.txs.forEach(function (tx) {
                             // no need to keep that as it changes
                             // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
                             // @ts-ignore
@@ -165,8 +162,8 @@ var LedgerV3Dot2Dot4 = /** @class */ (function (_super) {
                                 output.output_hash = tx.id;
                             });
                         });
-                        this.emit('fetched-address-transaction', { url: url, params: params, txs: txs });
-                        return [2 /*return*/, txs];
+                        this.emit('fetched-address-transaction', { url: url, params: params, txs: res.txs });
+                        return [2 /*return*/, res.txs];
                 }
             });
         });

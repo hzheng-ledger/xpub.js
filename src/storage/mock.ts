@@ -42,7 +42,8 @@ class Mock implements IStorage {
       const indexAddress = tx.address;
       const index = `${indexAddress}-${tx.id}`;
 
-      if (this.primaryIndex[index]) {
+      // we reject already seen tx and tx pendings
+      if (this.primaryIndex[index] || !tx.block) {
         return;
       }
 
