@@ -217,6 +217,9 @@ class Xpub extends EventEmitter {
     let i = 0;
     const unspentUtxoSelected: Output[] = [];
     while (total < amount + fee) {
+      if (!unspentUtxos[i]) {
+        throw new Error('amount bigger than the total balance');
+      }
       total += unspentUtxos[i].value;
       unspentUtxoSelected.push(unspentUtxos[i]);
       i += 1;
