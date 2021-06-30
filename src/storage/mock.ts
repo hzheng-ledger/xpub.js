@@ -24,6 +24,11 @@ class Mock implements IStorage {
     return tx;
   }
 
+  async getTx(address: string, id: string) {
+    const index = `${address}-${id}`;
+    return this.primaryIndex[index];
+  }
+
   // TODO: only expose unspentUtxos
   async getAddressUnspentUtxos(address: Address) {
     const indexAddress = address.address;

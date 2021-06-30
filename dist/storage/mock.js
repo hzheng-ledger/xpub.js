@@ -60,6 +60,15 @@ var Mock = /** @class */ (function () {
             });
         });
     };
+    Mock.prototype.getTx = function (address, id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var index;
+            return __generator(this, function (_a) {
+                index = address + "-" + id;
+                return [2 /*return*/, this.primaryIndex[index]];
+            });
+        });
+    };
     // TODO: only expose unspentUtxos
     Mock.prototype.getAddressUnspentUtxos = function (address) {
         return __awaiter(this, void 0, void 0, function () {

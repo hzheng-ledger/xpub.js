@@ -1,4 +1,3 @@
-import * as bjs from 'bitcoinjs-lib';
 import { ICrypto, DerivationMode } from './types';
 declare class Litecoin implements ICrypto {
     network: any;
@@ -10,6 +9,6 @@ declare class Litecoin implements ICrypto {
     getSegWitAddress(xpub: string, account: number, index: number): string;
     getAddress(derivationMode: string, xpub: string, account: number, index: number): string;
     getDerivationMode(address: string): string;
-    getPsbt(): bjs.Psbt;
+    toOutputScript(address: string): any;
 }
 export default Litecoin;

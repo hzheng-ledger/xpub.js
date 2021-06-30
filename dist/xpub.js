@@ -317,20 +317,15 @@ var Xpub = /** @class */ (function (_super) {
             });
         });
     };
-    Xpub.prototype.buildTx = function (change, destAddress, amount, fee) {
+    Xpub.prototype.buildTx = function (destAddress, amount, fee, changeAddress) {
         return __awaiter(this, void 0, void 0, function () {
-            var psbt, addresses, unspentUtxos, _a, total, i, unspentUtxoSelected, txHexs, changeAddress, inputsAddresses;
+            var addresses, unspentUtxos, _a, total, i, unspentUtxoSelected, txHexs, txs, inputs, associatedDerivations, outputs;
             var _this = this;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0:
-                        if (this.derivationMode !== 'Legacy') {
-                            throw new Error('not supported yet');
-                        }
-                        return [4 /*yield*/, this.whenSynced('all')];
+                    case 0: return [4 /*yield*/, this.whenSynced('all')];
                     case 1:
                         _b.sent();
-                        psbt = this.crypto.getPsbt();
                         return [4 /*yield*/, this.getXpubAddresses()];
                     case 2:
                         addresses = _b.sent();
@@ -343,6 +338,9 @@ var Xpub = /** @class */ (function (_super) {
                         i = 0;
                         unspentUtxoSelected = [];
                         while (total < amount + fee) {
+                            if (!unspentUtxos[i]) {
+                                throw new Error('amount bigger than the total balance');
+                            }
                             total += unspentUtxos[i].value;
                             unspentUtxoSelected.push(unspentUtxos[i]);
                             i += 1;
@@ -350,38 +348,29 @@ var Xpub = /** @class */ (function (_super) {
                         return [4 /*yield*/, Promise.all(unspentUtxoSelected.map(function (unspentUtxo) { return _this.explorer.getTxHex(unspentUtxo.output_hash); }))];
                     case 4:
                         txHexs = _b.sent();
-                        return [4 /*yield*/, this.getNewAddress(change.account, change.gap)];
+                        return [4 /*yield*/, Promise.all(unspentUtxoSelected.map(function (unspentUtxo) { return _this.storage.getTx(unspentUtxo.address, unspentUtxo.output_hash); }))];
                     case 5:
-                        changeAddress = _b.sent();
-                        inputsAddresses = [];
-                        // eslint-disable-next-line no-shadow
-                        unspentUtxoSelected.forEach(function (output, i) {
-                            //
-                            var nonWitnessUtxo = Buffer.from(txHexs[i], 'hex');
-                            // for segwit inputs, you only need the output script and value as an object.
-                            var witnessUtxo = {
-                                value: output.value,
-                                script: Buffer.from(output.script_hex, 'hex'),
-                            };
-                            var mixin = _this.derivationMode !== 'Legacy' ? { witnessUtxo: witnessUtxo } : { nonWitnessUtxo: nonWitnessUtxo };
-                            psbt.addInput(__assign({ hash: output.output_hash, index: output.output_index }, mixin));
-                            var outputAddress = addresses.find(function (address) { return address.address === output.address; }) || {
-                                account: 0,
-                                index: 0,
-                                address: output.address,
-                            };
-                            inputsAddresses.push(outputAddress);
-                        });
-                        psbt
-                            .addOutput({
-                            address: destAddress,
-                            value: amount,
-                        })
-                            .addOutput({
-                            address: changeAddress,
-                            value: total - amount - fee,
-                        });
-                        return [2 /*return*/, { psbt: psbt, inputsAddresses: inputsAddresses, txHexs: txHexs }];
+                        txs = _b.sent();
+                        inputs = unspentUtxoSelected.map(function (utxo, index) { return [txHexs[index], utxo.output_index]; });
+                        associatedDerivations = unspentUtxoSelected.map(function (utxo, index) { return [
+                            txs[index].account,
+                            txs[index].index,
+                        ]; });
+                        outputs = [
+                            {
+                                script: this.crypto.toOutputScript(destAddress),
+                                value: amount,
+                            },
+                            {
+                                script: this.crypto.toOutputScript(changeAddress),
+                                value: total - amount - fee,
+                            },
+                        ];
+                        return [2 /*return*/, {
+                                inputs: inputs,
+                                associatedDerivations: associatedDerivations,
+                                outputs: outputs,
+                            }];
                 }
             });
         });
