@@ -88,7 +88,8 @@ var Mock = /** @class */ (function () {
                 txs.forEach(function (tx) {
                     var indexAddress = tx.address;
                     var index = indexAddress + "-" + tx.id;
-                    if (_this.primaryIndex[index]) {
+                    // we reject already seen tx and tx pendings
+                    if (_this.primaryIndex[index] || !tx.block) {
                         return;
                     }
                     _this.primaryIndex[index] = tx;
