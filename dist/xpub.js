@@ -296,7 +296,7 @@ var Xpub = /** @class */ (function (_super) {
     };
     Xpub.prototype.getNewAddress = function (account, gap) {
         return __awaiter(this, void 0, void 0, function () {
-            var accountAddresses, lastIndex, index;
+            var accountAddresses, lastIndex, index, address;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.whenSynced('account', account.toString())];
@@ -312,7 +312,12 @@ var Xpub = /** @class */ (function (_super) {
                         else {
                             index = lastIndex + gap;
                         }
-                        return [2 /*return*/, this.crypto.getAddress(this.derivationMode, this.xpub, account, index)];
+                        address = {
+                            address: this.crypto.getAddress(this.derivationMode, this.xpub, account, index),
+                            account: account,
+                            index: index,
+                        };
+                        return [2 /*return*/, address];
                 }
             });
         });
