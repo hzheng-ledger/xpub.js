@@ -14,6 +14,7 @@ declare class Mock implements IStorage {
         account?: number;
         index?: number;
     }): Promise<TX>;
+    getTx(address: string, id: string): Promise<TX>;
     getAddressUnspentUtxos(address: Address): Promise<Output[]>;
     appendTxs(txs: TX[]): Promise<number>;
     getUniquesAddresses(addressesFilter: {

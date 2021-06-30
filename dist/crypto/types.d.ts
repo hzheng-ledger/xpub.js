@@ -1,4 +1,4 @@
-import * as bitcoin from 'bitcoinjs-lib';
+/// <reference types="node" />
 export interface DerivationMode {
     [index: string]: string;
 }
@@ -7,5 +7,5 @@ export interface ICrypto {
     DerivationMode: DerivationMode;
     getAddress(derivationMode: string, xpub: string, account: number, index: number): string;
     getDerivationMode(address: string): string;
-    getPsbt(): bitcoin.Psbt;
+    toOutputScript(address: string): Buffer;
 }

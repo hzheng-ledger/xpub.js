@@ -16,6 +16,7 @@
     "dist/"
   ],
   "devDependencies": {
+    "@types/bitcoinjs-lib": "^5.0.0",
     "@types/jest": "^25.2.3",
     "@types/lodash": "^4.14.170",
     "@types/node": "^15.12.4",

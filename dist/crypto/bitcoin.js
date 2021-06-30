@@ -22,6 +22,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var bjs = __importStar(require("bitcoinjs-lib"));
 var bip32 = __importStar(require("bip32"));
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+var address_1 = require("bitcoinjs-lib/src/address");
 var Bitcoin = /** @class */ (function () {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function Bitcoin(_a) {
@@ -89,8 +92,8 @@ var Bitcoin = /** @class */ (function () {
         }
         throw new Error('INVALID ADDRESS: '.concat(address).concat(' is not a valid address'));
     };
-    Bitcoin.prototype.getPsbt = function () {
-        return new bjs.Psbt({ network: this.network });
+    Bitcoin.prototype.toOutputScript = function (address) {
+        return address_1.toOutputScript(address, this.network);
     };
     return Bitcoin;
 }());
