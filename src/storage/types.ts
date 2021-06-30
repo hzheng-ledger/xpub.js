@@ -39,6 +39,7 @@ export interface IStorage {
   appendTxs(txs: TX[]): Promise<number>;
   getAddressUnspentUtxos(address: Address): Promise<Output[]>;
   getLastTx(txFilter: { account?: number; index?: number }): Promise<TX | undefined>;
+  getTx(address: string, id: string): Promise<TX | undefined>;
   getUniquesAddresses(addressesFilter: { account?: number; index?: number }): Promise<Address[]>;
   export(): Promise<TX[]>;
   load(tx: TX[]): Promise<void>;
