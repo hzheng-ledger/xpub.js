@@ -30,7 +30,7 @@ declare class Xpub extends EventEmitter {
     getAddressBalance(address: Address): Promise<number>;
     getXpubAddresses(): Promise<Address[]>;
     getAccountAddresses(account: number): Promise<Address[]>;
-    getNewAddress(account: number, gap: number): Promise<string>;
+    getNewAddress(account: number, gap: number): Promise<Address>;
     buildTx(destAddress: string, amount: number, fee: number, changeAddress: string): Promise<{
         inputs: [string, number][];
         associatedDerivations: [number, number][];

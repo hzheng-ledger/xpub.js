@@ -192,7 +192,12 @@ class Xpub extends EventEmitter {
     } else {
       index = lastIndex + gap;
     }
-    return this.crypto.getAddress(this.derivationMode, this.xpub, account, index);
+    const address: Address = {
+      address: this.crypto.getAddress(this.derivationMode, this.xpub, account, index),
+      account,
+      index,
+    };
+    return address;
   }
 
   async buildTx(destAddress: string, amount: number, fee: number, changeAddress: string) {

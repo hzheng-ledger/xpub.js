@@ -49,7 +49,7 @@ describeToUse('testing legacy transactions', () => {
   });
 
   beforeAll(async () => {
-    const address = await xpubs[0].xpub.getNewAddress(0, 0);
+    const { address } = await xpubs[0].xpub.getNewAddress(0, 0);
 
     try {
       await axios.post('http://localhost:28443/chain/clear/all');
@@ -78,8 +78,8 @@ describeToUse('testing legacy transactions', () => {
   });
 
   it('should send a 1 btc tx to xpubs[1].xpub', async () => {
-    const address = await xpubs[1].xpub.getNewAddress(0, 0);
-    const change = await xpubs[0].xpub.getNewAddress(1, 0);
+    const { address } = await xpubs[1].xpub.getNewAddress(0, 0);
+    const { address: change } = await xpubs[0].xpub.getNewAddress(1, 0);
 
     const psbt = new bitcoin.Psbt({ network });
 
@@ -117,7 +117,7 @@ describeToUse('testing legacy transactions', () => {
     }
 
     try {
-      const mineAddress = await xpubs[2].xpub.getNewAddress(0, 0);
+      const { address: mineAddress } = await xpubs[2].xpub.getNewAddress(0, 0);
       await axios.post(`http://localhost:28443/chain/mine/${mineAddress}/1`);
     } catch (e) {
       // eslint-disable-next-line no-console
