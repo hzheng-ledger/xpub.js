@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import axiosRetry from 'axios-retry';
 import * as https from 'https';
-import { findIndex } from 'lodash';
 import { Address, TX } from '../storage/types';
 import EventEmitter from '../utils/eventemitter';
 import { IExplorer } from './types';
@@ -69,14 +68,8 @@ class LedgerV3Dot2Dot4 extends EventEmitter implements IExplorer {
       })
     ).data;
 
-    // explorer returns pending tx without block at the beginning of any request
-    // we get rid of them
-    const firstNonPendingIndex = findIndex(res.txs, (tx) => !!tx.block);
-
-    const txs = res.txs.slice(firstNonPendingIndex, res.txs.length);
-
     // faster than mapping
-    txs.forEach((tx) => {
+    res.txs.forEach((tx) => {
       // no need to keep that as it changes
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
@@ -95,9 +88,9 @@ class LedgerV3Dot2Dot4 extends EventEmitter implements IExplorer {
       });
     });
 
-    this.emit('fetched-address-transaction', { url, params, txs });
+    this.emit('fetched-address-transaction', { url, params, txs: res.txs });
 
-    return txs;
+    return res.txs;
   }
 }
 

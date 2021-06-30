@@ -49,7 +49,7 @@ describeToUse('testing legacy transactions', () => {
   });
 
   beforeAll(async () => {
-    const address = await xpubs[0].xpub.getNewAddress(0, 0);
+    const { address } = await xpubs[0].xpub.getNewAddress(0, 0);
 
     try {
       await axios.post('http://localhost:28443/chain/clear/all');
@@ -78,25 +78,35 @@ describeToUse('testing legacy transactions', () => {
   });
 
   it('should send a 1 btc tx to xpubs[1].xpub', async () => {
-    const address = await xpubs[1].xpub.getNewAddress(0, 0);
+    const { address } = await xpubs[1].xpub.getNewAddress(0, 0);
+    const { address: change } = await xpubs[0].xpub.getNewAddress(1, 0);
 
-    const psbt = await xpubs[0].xpub.buildTx(
-      {
-        account: 1,
-        gap: 1,
-      },
-      address,
-      100000000,
-      500
-    );
+    const psbt = new bitcoin.Psbt({ network });
 
-    // this part is the signature to tx hex part that is supposedly handled by the device
-    psbt.psbt.txInputs.forEach((input, i) => {
-      psbt.psbt.signInput(i, xpubs[0].signer(psbt.inputsAddresses[i].account, psbt.inputsAddresses[i].index));
-      psbt.psbt.validateSignaturesOfInput(i);
+    const { inputs, associatedDerivations, outputs } = await xpubs[0].xpub.buildTx(address, 100000000, 500, change);
+
+    inputs.forEach(([txHex, index]) => {
+      const nonWitnessUtxo = Buffer.from(txHex, 'hex');
+      const tx = bitcoin.Transaction.fromHex(txHex);
+
+      psbt.addInput({
+        hash: tx.getId(),
+        index,
+        nonWitnessUtxo,
+      });
     });
-    psbt.psbt.finalizeAllInputs();
-    const rawTxHex = psbt.psbt.extractTransaction().toHex();
+    outputs.forEach((output) => {
+      psbt.addOutput({
+        script: output.script,
+        value: output.value,
+      });
+    });
+    inputs.forEach((_, i) => {
+      psbt.signInput(i, xpubs[0].signer(associatedDerivations[i][0], associatedDerivations[i][1]));
+      psbt.validateSignaturesOfInput(i);
+    });
+    psbt.finalizeAllInputs();
+    const rawTxHex = psbt.extractTransaction().toHex();
     //
 
     try {
@@ -107,7 +117,7 @@ describeToUse('testing legacy transactions', () => {
     }
 
     try {
-      const mineAddress = await xpubs[2].xpub.getNewAddress(0, 0);
+      const { address: mineAddress } = await xpubs[2].xpub.getNewAddress(0, 0);
       await axios.post(`http://localhost:28443/chain/mine/${mineAddress}/1`);
     } catch (e) {
       // eslint-disable-next-line no-console

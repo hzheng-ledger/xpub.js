@@ -2,6 +2,9 @@
 
 import * as bjs from 'bitcoinjs-lib';
 import * as bip32 from 'bip32';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { toOutputScript } from 'bitcoinjs-lib/src/address';
 import { ICrypto, DerivationMode } from './types';
 
 class Bitcoin implements ICrypto {
@@ -82,8 +85,8 @@ class Bitcoin implements ICrypto {
     throw new Error('INVALID ADDRESS: '.concat(address).concat(' is not a valid address'));
   }
 
-  getPsbt() {
-    return new bjs.Psbt({ network: this.network });
+  toOutputScript(address: string) {
+    return toOutputScript(address, this.network);
   }
 }
 

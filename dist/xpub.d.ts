@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { Address, IStorage } from './storage/types';
 import EventEmitter from './utils/eventemitter';
 import { IExplorer } from './explorer/types';
@@ -29,14 +30,14 @@ declare class Xpub extends EventEmitter {
     getAddressBalance(address: Address): Promise<number>;
     getXpubAddresses(): Promise<Address[]>;
     getAccountAddresses(account: number): Promise<Address[]>;
-    getNewAddress(account: number, gap: number): Promise<string>;
-    buildTx(change: {
-        account: number;
-        gap: number;
-    }, destAddress: string, amount: number, fee: number): Promise<{
-        psbt: import("bitcoinjs-lib").Psbt;
-        inputsAddresses: Address[];
-        txHexs: string[];
+    getNewAddress(account: number, gap: number): Promise<Address>;
+    buildTx(destAddress: string, amount: number, fee: number, changeAddress: string): Promise<{
+        inputs: [string, number][];
+        associatedDerivations: [number, number][];
+        outputs: {
+            script: Buffer;
+            value: number;
+        }[];
     }>;
     broadcastTx(rawTxHex: string): Promise<any>;
     getAddressesBalance(addresses: Address[]): Promise<number>;

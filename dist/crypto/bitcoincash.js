@@ -23,9 +23,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var bjs = __importStar(require("bitcoinjs-lib"));
 var bch = __importStar(require("bitcore-lib-cash"));
 var bchaddrjs_1 = __importDefault(require("bchaddrjs"));
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+var address_1 = require("bitcoinjs-lib/src/address");
 // a mock explorer class that just use js objects
 var BitcoinCash = /** @class */ (function () {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,11 +59,12 @@ var BitcoinCash = /** @class */ (function () {
     // TODO: improve the prefix matching: make the expected prefix
     // correspond to the actual type (currently, a `ltc1` prefix
     // could match a native Bitcoin address type for instance)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     BitcoinCash.prototype.getDerivationMode = function (address) {
         return this.DerivationMode.BCH;
     };
-    BitcoinCash.prototype.getPsbt = function () {
-        return new bjs.Psbt({ network: this.network });
+    BitcoinCash.prototype.toOutputScript = function (address) {
+        return address_1.toOutputScript(address, this.network);
     };
     return BitcoinCash;
 }());

@@ -1,8 +1,10 @@
 // from https://github.com/LedgerHQ/xpub-scan/blob/master/src/actions/deriveAddresses.ts
 
-import * as bjs from 'bitcoinjs-lib';
 import * as bch from 'bitcore-lib-cash';
 import bchaddr from 'bchaddrjs';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { toOutputScript } from 'bitcoinjs-lib/src/address';
 import { ICrypto, DerivationMode } from './types';
 
 // a mock explorer class that just use js objects
@@ -41,12 +43,13 @@ class BitcoinCash implements ICrypto {
   // TODO: improve the prefix matching: make the expected prefix
   // correspond to the actual type (currently, a `ltc1` prefix
   // could match a native Bitcoin address type for instance)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getDerivationMode(address: string) {
     return this.DerivationMode.BCH;
   }
 
-  getPsbt() {
-    return new bjs.Psbt({ network: this.network });
+  toOutputScript(address: string) {
+    return toOutputScript(address, this.network);
   }
 }
 

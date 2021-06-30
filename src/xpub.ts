@@ -192,17 +192,16 @@ class Xpub extends EventEmitter {
     } else {
       index = lastIndex + gap;
     }
-    return this.crypto.getAddress(this.derivationMode, this.xpub, account, index);
+    const address: Address = {
+      address: this.crypto.getAddress(this.derivationMode, this.xpub, account, index),
+      account,
+      index,
+    };
+    return address;
   }
 
-  async buildTx(change: { account: number; gap: number }, destAddress: string, amount: number, fee: number) {
-    if (this.derivationMode !== 'Legacy') {
-      throw new Error('not supported yet');
-    }
-
+  async buildTx(destAddress: string, amount: number, fee: number, changeAddress: string) {
     await this.whenSynced('all');
-
-    const psbt = this.crypto.getPsbt();
 
     // get the utxos to use as input
     // from all addresses of the account
@@ -217,6 +216,9 @@ class Xpub extends EventEmitter {
     let i = 0;
     const unspentUtxoSelected: Output[] = [];
     while (total < amount + fee) {
+      if (!unspentUtxos[i]) {
+        throw new Error('amount bigger than the total balance');
+      }
       total += unspentUtxos[i].value;
       unspentUtxoSelected.push(unspentUtxos[i]);
       i += 1;
@@ -225,51 +227,32 @@ class Xpub extends EventEmitter {
     const txHexs = await Promise.all(
       unspentUtxoSelected.map((unspentUtxo) => this.explorer.getTxHex(unspentUtxo.output_hash))
     );
+    const txs = await Promise.all(
+      unspentUtxoSelected.map((unspentUtxo) => this.storage.getTx(unspentUtxo.address, unspentUtxo.output_hash))
+    );
 
-    // calculate change address
-    const changeAddress = await this.getNewAddress(change.account, change.gap);
-
-    const inputsAddresses: Address[] = [];
-
-    // eslint-disable-next-line no-shadow
-    unspentUtxoSelected.forEach((output, i) => {
-      //
-
-      const nonWitnessUtxo = Buffer.from(txHexs[i], 'hex');
-      // for segwit inputs, you only need the output script and value as an object.
-      const witnessUtxo = {
-        value: output.value,
-        script: Buffer.from(output.script_hex, 'hex'),
-      };
-      const mixin = this.derivationMode !== 'Legacy' ? { witnessUtxo } : { nonWitnessUtxo };
-
-      psbt.addInput({
-        hash: output.output_hash,
-        index: output.output_index,
-
-        ...mixin,
-      });
-
-      const outputAddress = addresses.find((address) => address.address === output.address) || {
-        account: 0,
-        index: 0,
-        address: output.address,
-      };
-
-      inputsAddresses.push(outputAddress);
-    });
-
-    psbt
-      .addOutput({
-        address: destAddress,
+    // formatting approx the ledger way; ledger for the win
+    const inputs: [string, number][] = unspentUtxoSelected.map((utxo, index) => [txHexs[index], utxo.output_index]);
+    const associatedDerivations: [number, number][] = unspentUtxoSelected.map((utxo, index) => [
+      txs[index].account,
+      txs[index].index,
+    ]);
+    const outputs = [
+      {
+        script: this.crypto.toOutputScript(destAddress),
         value: amount,
-      })
-      .addOutput({
-        address: changeAddress,
+      },
+      {
+        script: this.crypto.toOutputScript(changeAddress),
         value: total - amount - fee,
-      });
+      },
+    ];
 
-    return { psbt, inputsAddresses, txHexs };
+    return {
+      inputs,
+      associatedDerivations,
+      outputs,
+    };
   }
 
   async broadcastTx(rawTxHex: string) {

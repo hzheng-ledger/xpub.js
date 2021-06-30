@@ -36,6 +36,7 @@ export interface IStorage {
         account?: number;
         index?: number;
     }): Promise<TX | undefined>;
+    getTx(address: string, id: string): Promise<TX | undefined>;
     getUniquesAddresses(addressesFilter: {
         account?: number;
         index?: number;
