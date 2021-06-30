@@ -11,6 +11,7 @@ import Xpub from '../xpub';
 import Bitcoin from '../crypto/bitcoin';
 import BitcoinCash from '../crypto/bitcoincash';
 import Litecoin from '../crypto/litecoin';
+import Digibyte from '../crypto/digibyte';
 
 const startLogging = (emitters: any) => {
   emitters.forEach((emitter: any) =>
@@ -30,6 +31,38 @@ expect.extend({ toMatchFile });
 
 describe('integration sync bitcoin mainnet / ledger explorer / mock storage', () => {
   const walletDatasets = [
+    {
+      xpub: 'xpub6CMtoA66sLkbsZo8RNq7PoKz19WdThkSxNzwz8MgyjhsPjVwjFqXqb69xyRVGs2iSd98yDrVL4A6tC2vsTsgQDPXFa46AvPoh5PWhppNdoV',
+      derivationMode: 'SegWit',
+      addresses: 46,
+      balance: 308018,
+      network: coininfo['bitcoin gold'].main.toBitcoinJS(),
+      coin: 'btg',
+    },
+    {
+      xpub: 'tpubDCYcGoj35gRcahvoxni1TTEaSgbqWXtqG6HvFWoXbXC2fbw2mprWwyKzvgv4WY4pBs8SL9wZzQYZ8bX9ecKQ91C5eTnsGuVEBKnborrKhUH',
+      derivationMode: 'SegWit',
+      addresses: 7,
+      balance: 375496,
+      network: coininfo.bitcoin.test.toBitcoinJS(),
+      coin: 'btc_testnet',
+    },
+    {
+      xpub: 'xpub6Bn7mxuS3VxCqofYcGaZDm2iAfSoGN9bY5LA2QG69BWaMtS4F58WgAYJhhUBjcwJJpLNtMB6i15J7gwBot6rNouLuuBEsA9uHxFAhQcD1M2',
+      derivationMode: 'SegWit',
+      addresses: 38,
+      balance: 403178204,
+      network: coininfo.digibyte.main.toBitcoinJS(),
+      coin: 'dgb',
+    },
+    {
+      xpub: 'xpub6C3xxFdpsuBPQegeJHvf1G6YMRkay4YJCERUmsWW3DbfcREPeEbcML7nmk79AMgcCu1YkC5CA2s1TZ5ubmVsWuEr7N97X6z2vtrpRzvQbhG',
+      derivationMode: 'Native SegWit',
+      addresses: 52,
+      balance: 80711645,
+      network: coininfo.digibyte.main.toBitcoinJS(),
+      coin: 'dgb',
+    },
     {
       xpub: 'xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz', // 3000ms
       derivationMode: 'Legacy',
@@ -85,6 +118,54 @@ describe('integration sync bitcoin mainnet / ledger explorer / mock storage', ()
           break;
         case 'ltc':
           crypto = new Litecoin({ network: dataset.network });
+          break;
+        case 'btc_testnet':
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'btg': // bitcoin gold
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'dash':
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'dgb': // digibyte
+          crypto = new Digibyte({ network: dataset.network });
+          break;
+        case 'doge': // dogecoin
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'kmd': // komodo
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'ppc': // peercoin
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'pivx':
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'qtum':
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'xsn': // stakenet
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'xst': // stealthcoin
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'strat': // stratis
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'vtc': // vertcoin
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'via': // viacoin
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'zec': // zcash
+          crypto = new Bitcoin({ network: dataset.network });
+          break;
+        case 'zen': // zencash
+          crypto = new Bitcoin({ network: dataset.network });
           break;
         default:
           throw new Error('Should not be reachable');

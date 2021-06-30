@@ -47,7 +47,6 @@ class Bitcoin implements ICrypto {
         network: this.network,
       }),
     });
-
     return String(address);
   }
 
