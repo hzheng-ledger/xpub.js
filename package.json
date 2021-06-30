@@ -9,7 +9,7 @@
     "build": "./scripts/build.sh",
     "prepublish": "npm run build"
   },
-  "main": "dist/index.js",
+  "main": "dist/xpub.js",
   "typings": "dist/index.d.ts",
   "license": "MIT",
   "files": [
