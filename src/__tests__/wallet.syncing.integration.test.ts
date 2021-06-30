@@ -28,7 +28,7 @@ const stopLogging = (emitters: any) => {
 
 expect.extend({ toMatchFile });
 
-describe('integration sync bitcoin mainnet / ledger explorer / mock storage', () => {
+describe('integration sync', () => {
   const walletDatasets = [
     {
       xpub: 'xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz', // 3000ms
@@ -90,7 +90,7 @@ describe('integration sync bitcoin mainnet / ledger explorer / mock storage', ()
           throw new Error('Should not be reachable');
       }
 
-      const wallet = new Xpub({
+      const xpub = new Xpub({
         storage,
         explorer: new Explorer({
           explorerURI: `https://explorers.api.vault.ledger.com/blockchain/v3/${dataset.coin}`,
@@ -102,25 +102,25 @@ describe('integration sync bitcoin mainnet / ledger explorer / mock storage', ()
 
       beforeAll(() => {
         startLogging([
-          { emitter: wallet, event: 'syncing', type: 'address' },
-          { emitter: wallet.explorer, event: null },
+          { emitter: xpub, event: 'syncing', type: 'address' },
+          { emitter: xpub.explorer, event: null },
         ]);
       });
       afterAll(() => {
-        stopLogging([wallet, wallet.explorer]);
+        stopLogging([xpub, xpub.explorer]);
       });
 
       it(
         'should sync from zero correctly',
         async () => {
-          await wallet.sync();
+          await xpub.sync();
 
           const truthDump = path.join(__dirname, 'data', 'sync', `${dataset.xpub}.json`);
 
           const txs = orderBy(await storage.export(), ['derivationMode', 'account', 'index', 'block.height', 'id']);
           expect(JSON.stringify(txs, null, 2)).toMatchFile(truthDump);
-          expect(await wallet.getXpubBalance()).toEqual(dataset.balance);
-          const addresses = await wallet.getXpubAddresses();
+          expect(await xpub.getXpubBalance()).toEqual(dataset.balance);
+          const addresses = await xpub.getXpubAddresses();
           expect(addresses.length).toEqual(dataset.addresses);
         },
         // github so slow
