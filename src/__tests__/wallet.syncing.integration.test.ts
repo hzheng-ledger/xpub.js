@@ -88,14 +88,6 @@ describe('integration sync', () => {
       coin: 'bch',
     },
     {
-      xpub: 'Ltub2ZgHGhWdGi2jacCdKEy3qddYxH4bpDtmueiPWkG8267Z9K8yQEExapyNi1y4Qp7f79JN8468uE9V3nizpPU27WEDfXrtqpkp84MyhhCDTNk',
-      addresses: 5,
-      balance: 87756,
-      network: coininfo.litecoin.main.toBitcoinJS(),
-      derivationMode: 'Legacy',
-      coin: 'ltc',
-    },
-    {
       xpub: 'xpub6CThYZbX4PTeA7KRYZ8YXP3F6HwT2eVKPQap3Avieds3p1eos35UzSsJtTbJ3vQ8d3fjRwk4bCEz4m4H6mkFW49q29ZZ6gS8tvahs4WCZ9X', // 138sec,
       derivationMode: 'Legacy',
       addresses: 9741,
@@ -103,6 +95,31 @@ describe('integration sync', () => {
       network: coininfo.bitcoin.main.toBitcoinJS(),
       coin: 'btc',
     },
+    {
+      xpub: 'Ltub2ZgHGhWdGi2jacCdKEy3qddYxH4bpDtmueiPWkG8267Z9K8yQEExapyNi1y4Qp7f79JN8468uE9V3nizpPU27WEDfXrtqpkp84MyhhCDTNk',
+      addresses: 5,
+      balance: 87756,
+      network: coininfo.litecoin.main.toBitcoinJS(),
+      derivationMode: 'Legacy',
+      coin: 'ltc',
+    },
+    /*
+    {
+      xpub: 'xpub6CRQUSTkAa6PDK8Jof6rrUX2YvWAyMxcMSev4cngAagUVKjfRHynULK4XetpqoL1PhversYdPYf7kyZkYs352akzSrd6Wvfpf9QqHCqd5D3',
+      derivationMode: 'SegWit',
+      addresses: 0,
+      balance: 0,
+      network: coininfo.bitcoin.main.toBitcoinJS(),
+      coin: 'xsn',
+    },
+    {
+      xpub: 'xpub6DWu8baXZKRb3FbLebkpXq2qm1hH4N9F8hzTBoZAWrPNBAXgCSK8qqfsc38gaCEFZWUS9rJHMgE3DS4rh7Qqn47PHKHYkMzWXfo39cYdwVJ',
+      derivationMode: 'Legacy',
+      addresses: 0,
+      balance: 0,
+      network: coininfo.zcash.main.toBitcoinJS(),
+      coin: 'zec',
+    }, */
   ];
 
   walletDatasets.forEach((dataset) =>
@@ -125,11 +142,13 @@ describe('integration sync', () => {
         case 'btg': // bitcoin gold
           crypto = new Bitcoin({ network: dataset.network });
           break;
-        case 'dash':
-          crypto = new Bitcoin({ network: dataset.network });
-          break;
         case 'dgb': // digibyte
           crypto = new Digibyte({ network: dataset.network });
+          break;
+        // todo support the following coins
+        /*
+        case 'dash':
+          crypto = new Bitcoin({ network: dataset.network });
           break;
         case 'doge': // dogecoin
           crypto = new Bitcoin({ network: dataset.network });
@@ -166,7 +185,7 @@ describe('integration sync', () => {
           break;
         case 'zen': // zencash
           crypto = new Bitcoin({ network: dataset.network });
-          break;
+          break; */
         default:
           throw new Error('Should not be reachable');
       }
